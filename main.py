@@ -1,3 +1,5 @@
+import time
+start_time = time.time()
 from matplotlib import gridspec
 import matplotlib.pylab as plt
 import numpy as np
@@ -7,6 +9,8 @@ import glob
 import PIL
 import imageio
 from pathlib import Path
+
+print("--- %s seconds ---" % round(time.time() - start_time,2))
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU'))) #Check if Tensorflow is working on GPU
 
@@ -49,7 +53,10 @@ original_images = [load_image(file) for file in glob.glob("original/*.jpg")]
 #Load style for ai
 style_image = load_image("style.jpg")
 #Learning ai with style
-style_image = tf.nn.avg_pool(style_image, ksize=[3,3], strides=[1,1], padding='VALID')
+#Ksize - bigger - smoother/blursed // 
+#Strides - smaller - better quality // if you want longer strides give one vector more
+#Must be int
+style_image = tf.nn.avg_pool(style_image, ksize=[3,3], strides=[1,1], padding='VALID') # 3,3 1,1 - best result
 #model for stylizing use magenta-arbitrary-stylization
 stylize_model = tf_hub.load('tf_model')
 
@@ -67,4 +74,4 @@ for x in original_images:
 
 print('\n\n')
 
-print('DONE! Check your ./result folder')
+print('DONE in %s seconds! Check your ./result folder' % round(time.time() - start_time,2))
